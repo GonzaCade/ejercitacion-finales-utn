@@ -1,0 +1,15 @@
+{
+  "name": "ejercitacion-finales-utn",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ejercitación para finales UTN Haedo - Seminario Universitario (Precálculo y Física)",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./css/styles.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./css/styles.css --watch",
+    "serve": "npx serve ."
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

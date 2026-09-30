@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#00455C">
+  <meta name="description" content="Simulador de exámenes finales del Seminario Universitario UTN Haedo: Noción de Precálculo y Física. Exámenes aleatorios con corrección automática y soluciones paso a paso.">
+  <title>Ejercitación para finales UTN</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preload" href="css/styles.css" as="style">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"></noscript>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <script defer src="js/utils.js"></script>
+  <script defer src="js/charts.js"></script>
+  <script defer src="js/gen-math-1.js"></script>
+  <script defer src="js/gen-math-2.js"></script>
+  <script defer src="js/gen-fisica.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <a href="#app" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-2">Ir al contenido</a>
+
+  <header id="header" class="sticky top-0 z-40 bg-white-a90 backdrop-blur border-b border-slate-200-a80 no-print">
+    <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5 sm:px-6">
+      <a href="#" id="brand" class="flex items-center gap-3 shrink-0" aria-label="Inicio">
+        <img src="assets/logo.png" alt="UTN Haedo" width="242" height="300" class="h-10 w-auto" decoding="async">
+        <div class="leading-tight hidden sm:block">
+          <p class="text-sm font-bold text-brand">Ejercitación para finales UTN</p>
+          <p class="text-[11px] text-slate-500">Seminario Universitario · Haedo</p>
+        </div>
+      </a>
+      <div id="header-status" class="ml-auto flex items-center gap-2 sm:gap-4 text-sm"></div>
+    </div>
+  </header>
+
+  <main id="app" class="mx-auto w-full max-w-6xl px-4 pb-28 pt-4 sm:px-6 sm:pt-6 data-[view=exam]:pb-2">
+    <!-- Vista inicial (skeleton estático para primer render rápido) -->
+    <section id="view-home" class="view">
+      <div class="grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
+        <div class="space-y-6">
+          <div class="card p-6 sm:p-8">
+            <div class="flex items-start gap-4">
+              <img src="assets/logo.png" alt="" class="h-16 w-auto shrink-0 sm:h-20" decoding="async">
+              <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-brand sm:text-3xl">Ejercitación para finales UTN</h1>
+                <p class="mt-1 text-slate-600">Simulá el final de <b>Noción de Precálculo</b> y/o <b>Física</b> del Seminario Universitario. Cada intento genera 10 puntos nuevos con la misma dificultad que los modelos y finales reales. Resolvé en tu cuaderno, cargá los resultados y recibí la nota con la solución paso a paso.</p>
+                <p class="mt-2 text-sm text-slate-500">Cargá solo los resultados: se aceptan decimales con coma o punto, fracciones (41/4), raíces (√5, sqrt(5)) y π (pi/6).</p>
+              </div>
+            </div>
+          </div>
+
+          <form id="config-form" class="card p-6 sm:p-8 space-y-7" autocomplete="off">
+            <fieldset>
+              <legend class="text-sm font-bold uppercase tracking-wide text-slate-500">Materia</legend>
+              <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                <label class="option"><input type="radio" name="subject" value="both" class="mt-1 accent-brand" checked><span><span class="block font-semibold">Precálculo + Física</span><span class="block text-xs text-slate-500">5 puntos de cada una</span></span></label>
+                <label class="option"><input type="radio" name="subject" value="math" class="mt-1 accent-brand"><span><span class="block font-semibold">Solo Precálculo</span><span class="block text-xs text-slate-500">10 puntos de Noción de Precálculo</span></span></label>
+                <label class="option"><input type="radio" name="subject" value="fisica" class="mt-1 accent-brand"><span><span class="block font-semibold">Solo Física</span><span class="block text-xs text-slate-500">10 puntos de cinemática y vectores</span></span></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="text-sm font-bold uppercase tracking-wide text-slate-500">Tiempo</legend>
+              <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                <label class="option"><input type="radio" name="timed" value="no" class="mt-1 accent-brand" checked><span><span class="block font-semibold">Sin tiempo</span><span class="block text-xs text-slate-500">Navegación libre, sin reloj</span></span></label>
+                <label class="option"><input type="radio" name="timed" value="yes" class="mt-1 accent-brand"><span><span class="block font-semibold">Con tiempo: 2 horas</span><span class="block text-xs text-slate-500">Equivalente a un final real</span></span></label>
+              </div>
+              <div id="mode-box" class="mt-3 grid gap-3 sm:grid-cols-2 opacity-40 pointer-events-none transition-opacity duration-300">
+                <label class="option"><input type="radio" name="mode" value="optimo" class="mt-1 accent-brand" checked><span><span class="block font-semibold">Tiempo óptimo por ejercicio: 8 min</span><span class="block text-xs text-slate-500">Al vencer pasa al siguiente. Cuando terminan los 10 puntos, podés completar lo que falte con el tiempo restante.</span></span></label>
+                <label class="option"><input type="radio" name="mode" value="maximo" class="mt-1 accent-brand"><span><span class="block font-semibold">Tiempo máximo por ejercicio: 10 min</span><span class="block text-xs text-slate-500">Cada punto se cierra al vencer o al entregarlo. No se puede volver atrás.</span></span></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="text-sm font-bold uppercase tracking-wide text-slate-500">Ayudas</legend>
+              <label class="option mt-3"><input type="checkbox" name="hints" class="mt-1 accent-brand"><span><span class="block font-semibold">Mostrar una pista para comenzar cada ejercicio</span><span class="block text-xs text-slate-500">Por ejemplo: "Ruffini", "SohCahToa", "Factorizar", "Teorema del resto"…</span></span></label>
+            </fieldset>
+
+            <div class="flex justify-end">
+              <button type="submit" class="btn-primary w-full text-base px-6 py-3 sm:w-auto">Comenzar examen</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="space-y-6">
+          <div id="history-card" class="card p-6"></div>
+          <div class="card p-6">
+            <h2 class="font-bold text-brand">¿Qué se toma en los finales?</h2>
+            <p class="mt-1 text-sm text-slate-600">Temas relevados de los modelos y finales 2024–2026 (cuatrimestral, intensivo de verano y recuperatorios). La etiqueta de color indica la <b>frecuencia</b> con la que el tema aparece en los exámenes (qué tan probable es que te toque), no su dificultad. Cada punto del simulador sale de estas familias.</p>
+            <div id="topics-box" class="mt-3"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="view-exam" class="view hidden"></section>
+    <section id="view-result" class="view hidden"></section>
+  </main>
+
+  <div id="exam-nav-root" class="no-print"></div>
+  <div id="modal-root"></div>
+  <div id="toast" class="pointer-events-none fixed inset-x-0 bottom-24 z-50 flex justify-center px-4 opacity-0 transition-opacity duration-300 no-print"><div class="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white shadow-lg"></div></div>
+</body>
+</html>

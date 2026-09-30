@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@source "../index.html";
+@source "../js";
+
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-slate-50: #f8fafc; --color-slate-100: #f1f5f9; --color-slate-200: #e2e8f0; --color-slate-300: #cbd5e1; --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b; --color-slate-600: #475569; --color-slate-700: #334155; --color-slate-800: #1e293b; --color-slate-900: #0f172a;
+  --color-emerald-100: #d1fae5; --color-emerald-300: #6ee7b7; --color-emerald-500: #10b981; --color-emerald-600: #059669; --color-emerald-700: #047857; --color-emerald-800: #065f46;
+  --color-red-100: #fee2e2; --color-red-300: #fca5a5; --color-red-500: #ef4444; --color-red-600: #dc2626; --color-red-700: #b91c1c; --color-red-800: #991b1b;
+  --color-amber-50: #fffbeb; --color-amber-100: #fef3c7; --color-amber-300: #fcd34d; --color-amber-400: #fbbf24; --color-amber-600: #d97706; --color-amber-800: #92400e; --color-amber-900: #78350f;
+  --color-cyan-100: #cffafe; --color-cyan-900: #164e63;
+  --color-brand-a20: #00455C33; --color-brand-a25: #00455C40; --color-brand-a40: #00455C66; --color-brand-a50: #00455C80;
+  --color-slate-200-a70: #e2e8f0b3; --color-slate-200-a80: #e2e8f0cc; --color-slate-50-a60: #f8fafc99; --color-slate-900-a50: #0f172a80;
+  --color-white-a90: #ffffffe6; --color-white-a95: #fffffff2; --color-brand-light-a50: #e6f0f380;
+  --color-brand: #00455C;
+  --color-brand-dark: #003245;
+  --color-brand-light: #e6f0f3;
+  --color-brand-mid: #2a7a93;
+  --color-cyan-utn: #00b4d8;
+  --color-amber-utn: #d97706;
+  --color-page: #f8f9fa;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --animate-fade-up: fade-up .35s cubic-bezier(.22,.61,.36,1) both;
+  --animate-pop: pop .3s cubic-bezier(.34,1.56,.64,1) both;
+  --animate-pulse-soft: pulse-soft 1s ease-in-out infinite;
+  @keyframes fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+  @keyframes pulse-soft { 0%,100% { box-shadow: 0 0 0 0 rgb(220 38 38 / .45); } 50% { box-shadow: 0 0 0 8px rgb(220 38 38 / 0); } }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { @apply bg-page text-slate-800 antialiased min-h-dvh; }
+  ::selection { background: #00455C; color: #fff; }
+  .katex { font-size: 1.05em; }
+  .katex-display { overflow-x: auto; overflow-y: hidden; padding: .35rem 0; margin: .5rem 0; }
+  .katex-display > .katex { white-space: normal; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+}
+
+@layer components {
+  .btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-a40 active:scale-[.98]; }
+  .btn-primary { @apply bg-brand text-white shadow-sm hover:bg-brand-dark hover:shadow-md; }
+  .btn-secondary { @apply bg-white text-brand border border-brand-a25 hover:bg-brand-light hover:border-brand-a40; }
+  .btn-ghost { @apply text-slate-600 hover:bg-slate-200-a70; }
+  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+  .card { @apply bg-white rounded-2xl shadow-sm border border-slate-200-a80; }
+  .option { @apply flex items-start gap-3 rounded-xl border-2 border-slate-200 bg-white p-4 cursor-pointer transition-all duration-200 hover:border-brand-a50 hover:shadow-sm has-[:checked]:border-brand has-[:checked]:bg-brand-light has-[:checked]:shadow-sm; }
+  .field { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 shadow-xs transition-all duration-150 placeholder:text-slate-400 focus:border-brand focus:ring-2 focus:ring-brand-a25 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500; }
+  .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  .hint { @apply text-xs text-slate-500 mt-1; }
+  .statement p { @apply my-2 leading-relaxed; }
+  .statement ul { @apply list-disc pl-6 my-2 space-y-1; }
+  .statement ol { @apply my-2 space-y-1; }
+  .statement b { @apply text-brand-dark; }
+  .solution p { @apply my-2 leading-relaxed; }
+  .solution b { @apply text-brand-dark; }
+  .solution table { @apply border-collapse; }
+  .solution .ruffini td { @apply border-r-0; }
+  .solution .ruffini tr:nth-child(2) td:first-child { @apply border-r border-slate-400; }
+  .figure { @apply mx-auto my-3 block; max-width: 100%; height: auto; max-height: 260px; }
+  .figure-sm { max-height: 160px; }
+  .dot { @apply flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border-2 border-transparent; }
+  .dot-idle { @apply bg-slate-200 text-slate-600 hover:bg-slate-300; }
+  .dot-done { @apply bg-brand-light text-brand border-brand-a40; }
+  .dot-active { @apply bg-brand text-white shadow-md scale-110; }
+  .dot-locked { @apply bg-slate-300 text-slate-500 cursor-not-allowed; }
+  .dot-ok { @apply bg-emerald-500 text-white; }
+  .dot-partial { @apply bg-amber-400 text-white; }
+  .dot-bad { @apply bg-red-500 text-white; }
+  .timer-danger { @apply text-red-600 animate-pulse-soft rounded-lg; }
+  .view { @apply animate-fade-up; }
+  .prose-hint { @apply rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900; }
+}
+
+.pdf-mode *, .pdf-mode *::before, .pdf-mode *::after { animation: none !important; transition: none !important; }
+.pdf-mode .no-print { display: none !important; }
+.pdf-mode .katex-display { overflow: visible; }
+.pdf-mode summary { list-style: none; }
+.pdf-mode summary::-webkit-details-marker { display: none; }
+.pdf-mode details > summary::before { content: '▸ '; }
+
+@media print {
+  body { background: #fff; }
+  .no-print { display: none !important; }
+  .card { box-shadow: none; border-color: #cbd5e1; break-inside: avoid; }
+  .print-break { break-before: page; }
+}
