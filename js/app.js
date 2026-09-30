@@ -352,15 +352,15 @@
   const inputBase = (i, key, sub, val, placeholder, extra = '') => `<input type="text" inputmode="text" autocomplete="off" spellcheck="false" class="field font-mono text-center ${extra}" data-i="${i}" data-key="${key}" data-sub="${sub}" value="${escapeHtml(val)}" placeholder="${placeholder}">`;
   function itemHtml(i, item, val, disabled) {
     let body = '';
-    const ph = 'ej: 2,5 ó 41/4';
+    const ph = 'Ej: 2,5';
     switch (item.type) {
       case 'number': body = `<div class="flex items-center gap-2 max-w-xs">${inputBase(i, item.key, '0', val, ph)}${item.unit ? `<span class="text-sm text-slate-500">${item.unit}</span>` : ''}</div>`; break;
       case 'vector': body = `<div class="flex items-center gap-1 max-w-xs"><span class="text-lg text-slate-500">(</span>${inputBase(i, item.key, '0', val[0], 'x')}<span class="text-lg text-slate-500">;</span>${inputBase(i, item.key, '1', val[1], 'y')}<span class="text-lg text-slate-500">)</span></div>`; break;
       case 'vectorset': body = `<div class="grid gap-2 sm:grid-cols-2">${val.map((v, k) => `<div class="flex items-center gap-1"><span class="w-6 text-xs font-bold text-slate-500">${(item.labels || [])[k] || ''}</span><span class="text-lg text-slate-500">(</span>${inputBase(i, item.key, `${k}.0`, v[0], 'x')}<span class="text-lg text-slate-500">;</span>${inputBase(i, item.key, `${k}.1`, v[1], 'y')}<span class="text-lg text-slate-500">)</span></div>`).join('')}</div>`; break;
-      case 'set': body = `<div class="flex flex-wrap items-center gap-3">${val.v.map((v, k) => `<label class="flex items-center gap-1 text-xs font-bold text-slate-500">${(item.labels || [])[k] || `x${k + 1}`}${inputBase(i, item.key, `v.${k}`, v, 'ej: 41/4', 'w-36')}</label>`).join('')}
+      case 'set': body = `<div class="flex flex-wrap items-center gap-3">${val.v.map((v, k) => `<label class="flex items-center gap-1 text-xs font-bold text-slate-500">${(item.labels || [])[k] || `x${k + 1}`}${inputBase(i, item.key, `v.${k}`, v, ph, 'w-32')}</label>`).join('')}
         ${item.allowEmpty ? `<label class="flex items-center gap-1.5 text-xs text-slate-600"><input type="checkbox" class="accent-brand" data-i="${i}" data-key="${item.key}" data-sub="none" ${val.none ? 'checked' : ''}> Sin solución</label>` : ''}</div>
         <p class="hint">Dejá vacíos los campos que no uses. El orden no importa.</p>`; break;
-      case 'poly': body = `<div class="flex flex-wrap items-center gap-1">${val.map((v, k) => { const p = item.degree - k; return `<span class="flex items-center gap-1">${inputBase(i, item.key, String(k), v, 'coef', 'w-20')}<span class="text-sm text-slate-600">${p === 0 ? '' : p === 1 ? (item.variable || 'x') : `${item.variable || 'x'}<sup>${p}</sup>`}${k < val.length - 1 ? ' +' : ''}</span></span>`; }).join('')}</div><p class="hint">Completá con 0 los términos que falten.</p>`; break;
+      case 'poly': body = `<div class="flex flex-wrap items-center gap-1">${val.map((v, k) => { const p = item.degree - k; return `<span class="flex items-center gap-1">${inputBase(i, item.key, String(k), v, '0', 'w-20')}<span class="text-sm text-slate-600">${p === 0 ? '' : p === 1 ? (item.variable || 'x') : `${item.variable || 'x'}<sup>${p}</sup>`}${k < val.length - 1 ? ' +' : ''}</span></span>`; }).join('')}</div><p class="hint">Completá con 0 los términos que falten.</p>`; break;
       case 'choice': body = `<div class="grid gap-2 sm:grid-cols-2">${item.options.map((o, k) => `<label class="option !p-3 text-sm"><input type="radio" name="c-${i}-${item.key}" class="mt-0.5 accent-brand" data-i="${i}" data-key="${item.key}" data-sub="choice" value="${k}" ${val === k ? 'checked' : ''} ${disabled ? 'disabled' : ''}><span>${o}</span></label>`).join('')}</div>`; break;
       default: break;
     }
