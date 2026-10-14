@@ -92,7 +92,8 @@
   const velChart = (v, tEnd) => C().linesChart([{ label: 'v(t)', f: v, color: '#d97706' }], { xMin: 0, xMax: tEnd, xLabel: 't (s)', yLabel: 'v (m/s)', n: 20 });
 
   G.fisica.tiroVertical = function (rng) {
-    const variant = rng.int(0, 2);
+    // primera instancia: sin la variante de velocidad inicial desconocida
+    const variant = rng.level === 'primera' ? rng.int(0, 1) : rng.int(0, 2);
     if (variant === 0) {
       const v0 = rng.pick([15, 20, 25, 30, 40, 50]); const t1 = rng.pick([1, 2]);
       const techo = rng.bool(0.4) ? rng.pick([10, 12, 20, 25]) : null;

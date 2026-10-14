@@ -114,55 +114,20 @@ $$\\frac{2\\sqrt{${k}}-\\sqrt2}{3\\sqrt2}=\\frac{2\\sqrt{${k}}}{3\\sqrt2}-\\frac
       { t: 'Velocidad de la luz', v: 3e8, txt: '300.000.000 m/s', m: 3, e: 8 },
       { t: 'Carga del electrón', v: 1.6e-19, txt: '0,00000000000000000016 C', m: 1.6, e: -19 },
     ];
-    const variant = rng.int(0, 2);
-    if (variant === 0) {
-      const [q1, q2] = rng.sample(pool, 2);
-      return {
-        topic: 'Notación científica', title: 'Expresar cantidades en notación científica',
-        hint: 'Corré la coma hasta dejar una sola cifra distinta de cero adelante; contá los lugares: exponente positivo si el número es grande, negativo si es chico.',
-        statement: `<p>Exprese en notación científica ($m\\times10^{n}$, con $1\\le m<10$) las siguientes cantidades:</p>
-<ul><li><b>${q1.t}:</b> ${q1.txt}</li><li><b>${q2.t}:</b> ${q2.txt}</li></ul>`,
-        items: [
-          { key: 'm1', type: 'number', label: `${q1.t} — mantisa m`, answer: q1.m, tol: 0.006 },
-          { key: 'e1', type: 'number', label: `${q1.t} — exponente n`, answer: q1.e, tol: 0 },
-          { key: 'm2', type: 'number', label: `${q2.t} — mantisa m`, answer: q2.m, tol: 0.006 },
-          { key: 'e2', type: 'number', label: `${q2.t} — exponente n`, answer: q2.e, tol: 0 },
-        ],
-        solution: `<p>Se corre la coma hasta dejar una sola cifra distinta de cero a la izquierda y se cuenta la cantidad de lugares corridos (positivo si el número es grande, negativo si es pequeño).</p>
-$$${q1.t}: ${tex(q1.m, 4)}\\times10^{${q1.e}}$$$$${q2.t}: ${tex(q2.m, 4)}\\times10^{${q2.e}}$$`,
-      };
-    }
-    if (variant === 1) {
-      // cabello: 1 cm por mes (30 días) → cm por hora
-      const cm = rng.pick([1, 1.2, 1.5, 2]);
-      const perHour = cm / (30 * 24);
-      const e = Math.floor(Math.log10(perHour)); const m = perHour / Math.pow(10, e);
-      return {
-        topic: 'Notación científica', title: 'Estimación y notación científica',
-        hint: 'Regla de tres / factores de conversión. Al final, escribí el resultado como m × 10ⁿ con 1 ≤ m < 10.',
-        statement: `<p>Un cabello humano crece aproximadamente ${fmt(cm, 1)} cm por mes (considere 30 días). ¿Cuánto estima que podría crecer en una hora? Exprese el resultado en notación científica y, en el caso de que sea un número periódico, escriba el valor estimado como fracción.</p>`,
-        items: [
-          { key: 'f', type: 'number', label: 'Crecimiento por hora (cm), como fracción o decimal', answer: perHour, tol: perHour * 0.02 },
-          { key: 'm', type: 'number', label: 'Mantisa m', answer: round(m, 2), tol: 0.02 },
-          { key: 'e', type: 'number', label: 'Exponente n', answer: e, tol: 0 },
-        ],
-        solution: `<p>Un mes tiene $30\\cdot24=720$ horas, entonces</p>$$\\frac{${tex(cm, 1)}\\ \\text{cm}}{720\\ \\text{h}}=${texFrac(perHour, 800)}\\ \\text{cm/h}\\approx ${tex(perHour, 5)}=${tex(round(m, 2), 2)}\\times10^{${e}}\\ \\text{cm/h}$$`,
-      };
-    }
-    // glóbulos blancos
-    const gb = rng.pick([5, 6, 7, 8]) * 1e6, ml = rng.pick([70, 75, 80]), kg = rng.pick([60, 65, 70, 80, 90]);
-    const total = gb * ml * kg;
-    const e = Math.floor(Math.log10(total)); const m = total / Math.pow(10, e);
+    const [q1, q2] = rng.sample(pool, 2);
     return {
-      topic: 'Notación científica', title: 'Estimación y notación científica',
-        hint: 'Regla de tres / factores de conversión. Al final, escribí el resultado como m × 10ⁿ con 1 ≤ m < 10.',
-      statement: `<p>En promedio hay ${fmt(gb / 1e6, 0)}.000.000 de glóbulos blancos por mililitro de sangre en un ser humano. Si se sabe que por cada kilogramo una persona tiene aproximadamente ${ml} ml de sangre:</p>
-<ul><li>Estime cuántos glóbulos blancos tendrá una persona que pesa ${kg} kg.</li><li>Exprese el resultado en notación científica.</li></ul>`,
+      topic: 'Notación científica', title: 'Expresar cantidades en notación científica',
+      hint: 'Corré la coma hasta dejar una sola cifra distinta de cero adelante; contá los lugares: exponente positivo si el número es grande, negativo si es chico.',
+      statement: `<p>Exprese en notación científica ($m\\times10^{n}$, con $1\\le m<10$) las siguientes cantidades:</p>
+<ul><li><b>${q1.t}:</b> ${q1.txt}</li><li><b>${q2.t}:</b> ${q2.txt}</li></ul>`,
       items: [
-        { key: 'm', type: 'number', label: 'Mantisa m', answer: round(m, 3), tol: 0.006 },
-        { key: 'e', type: 'number', label: 'Exponente n', answer: e, tol: 0 },
+        { key: 'm1', type: 'number', label: `${q1.t} — mantisa m`, answer: q1.m, tol: 0.006 },
+        { key: 'e1', type: 'number', label: `${q1.t} — exponente n`, answer: q1.e, tol: 0 },
+        { key: 'm2', type: 'number', label: `${q2.t} — mantisa m`, answer: q2.m, tol: 0.006 },
+        { key: 'e2', type: 'number', label: `${q2.t} — exponente n`, answer: q2.e, tol: 0 },
       ],
-      solution: `$$${tex(gb / 1e6, 0)}\\times10^{6}\\ \\tfrac{\\text{glób.}}{\\text{ml}}\\cdot ${ml}\\ \\tfrac{\\text{ml}}{\\text{kg}}\\cdot ${kg}\\ \\text{kg}=${tex(total, 0)}=${tex(round(m, 3), 3)}\\times10^{${e}}\\ \\text{glóbulos blancos}$$`,
+      solution: `<p>Se corre la coma hasta dejar una sola cifra distinta de cero a la izquierda y se cuenta la cantidad de lugares corridos (positivo si el número es grande, negativo si es pequeño).</p>
+$$${q1.t}: ${tex(q1.m, 4)}\\times10^{${q1.e}}$$$$${q2.t}: ${tex(q2.m, 4)}\\times10^{${q2.e}}$$`,
     };
   };
 

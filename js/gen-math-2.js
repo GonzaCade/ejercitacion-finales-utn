@@ -195,7 +195,8 @@ $$\\begin{cases}x+y=${T}&(1)\\\\ ${tex(p1 / 100)}\\,x+${tex(p2 / 100)}\\,y=${tex
 
   /* ======================= 11. CUADRÁTICAS EN CONTEXTO ======================= */
   G.math.cuadraticaContexto = function (rng) {
-    const variant = rng.int(0, 6);
+    // primera instancia: solo altura de un objeto lanzado y tiro vertical con recta secante
+    const variant = rng.level === 'primera' ? rng.int(0, 1) : rng.int(0, 6);
     const parab = (a, b, c, xMin, xMax, pts, labels) => C().linesChart([{ label: labels ? labels[2] : 'f(x)', f: (x) => a * x * x + b * x + c, color: '#00455C' }], { xMin, xMax, points: pts, xLabel: labels ? labels[0] : 'x', yLabel: labels ? labels[1] : 'y' });
     if (variant === 0) {
       const a = -rng.pick([5, 16, 4.9]), b = rng.pick([40, 64, 8.3, 30, 96]), c = rng.pick([23, 112, 190, 45, 80]);
@@ -611,36 +612,6 @@ $$${texFrac(coef, 1000)}\\,x^{${X}}y^{${Y}}z^{${Z}}$$`,
 <p><b>$f(${x0})$:</b> en $x=${x0}$ la gráfica está a la altura ${fmt(ys[x0], 1)}.</p>
 <p><b>$f(x)=${tex(target, 1)}$:</b> ocurre en los nodos $x=${xsTarget.join(', ')}$ (la línea toca ese valor allí).</p>
 <p><b>$f(x)>${thr}$:</b> mirando los tramos por encima de ${thr}: $${correct}$. Por debajo: $${intTex(negInt)}$.</p>`,
-    };
-  };
-
-  /* ======================= 16. CUADRILÁTERO DE RECTAS ======================= */
-  G.math.cuadrilatero = function (rng) {
-    const rect = rng.bool(0.4);
-    const m1 = rng.pick([1, 2, 0.5, -1, 3]);
-    const m2 = rect ? -1 / m1 : rng.pick([0.25, -2, 0.5, -0.5, 3].filter((v) => v !== m1 && v !== -1 / m1));
-    const b1 = rng.intNZ(-4, 4), b2 = b1 + rng.pick([-3, 3, -4, 4, 5]);
-    const c1 = rng.intNZ(-4, 4), c2 = c1 + rng.pick([-3, 3, -2, 2, 4]);
-    const inter = (ma, ba, mb, bb) => { const x = (bb - ba) / (ma - mb); return [x, ma * x + ba]; };
-    const V = [inter(m1, b1, m2, c1), inter(m1, b1, m2, c2), inter(m1, b2, m2, c2), inter(m1, b2, m2, c1)];
-    const side = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
-    const s1 = side(V[0], V[1]), s2 = side(V[1], V[2]);
-    const equalSides = Math.abs(s1 - s2) < 1e-6;
-    const type = rect ? (equalSides ? 'Cuadrado' : 'Rectángulo') : (equalSides ? 'Rombo' : 'Paralelogramo');
-    const opts = ['Paralelogramo', 'Rectángulo', 'Rombo', 'Cuadrado', 'Trapecio'];
-    const lines = [line(m1, b1), line(m1, b2), line(m2, c1), line(m2, c2)];
-    return {
-      topic: 'Rectas', title: 'Cuadrilátero formado por rectas',
-      hint: 'Rectas con igual pendiente son paralelas; si m₁·m₂ = −1 son perpendiculares. Vértices: igualá las ecuaciones de a pares.',
-      statement: `<p>Trace en el mismo sistema de ejes cartesianos la gráfica de las funciones: ${lines.map((l) => `$${l}$`).join(' ; ')}. ¿Qué tipo de cuadrilátero forman estas rectas al cortarse? Encuentre los puntos de intersección.</p>`,
-      items: [
-        { key: 't', type: 'choice', label: 'Tipo de cuadrilátero', options: opts, answer: opts.indexOf(type) },
-        { key: 'v', type: 'vectorset', label: 'Vértices (en cualquier orden)', answer: V, labels: ['A', 'B', 'C', 'D'], paren: true },
-      ],
-      solution: `<p>Las rectas $${lines[0]}$ y $${lines[1]}$ tienen pendiente $${texFrac(m1)}$ (paralelas); $${lines[2]}$ y $${lines[3]}$ tienen pendiente $${texFrac(m2)}$ (paralelas). ${rect ? `Además $${texFrac(m1)}\\cdot${texFrac(m2)}=-1$: son perpendiculares.` : 'Los pares no son perpendiculares.'}</p>
-<p>Vértices (igualando ecuaciones de a pares): ${V.map((p) => `$(${tex(p[0])};${tex(p[1])})$`).join(', ')}.</p>
-<p>Lados: $${tex(s1)}$ y $${tex(s2)}$ → ${equalSides ? 'iguales' : 'distintos'}. Por lo tanto es un <b>${type.toLowerCase()}</b>.</p>`,
-      chart: C().linesChart([{ label: lines[0], f: (x) => m1 * x + b1, color: '#00455C' }, { label: lines[1], f: (x) => m1 * x + b2, color: '#00455C', dashed: true }, { label: lines[2], f: (x) => m2 * x + c1, color: '#d97706' }, { label: lines[3], f: (x) => m2 * x + c2, color: '#d97706', dashed: true }], { xMin: Math.min(...V.map((p) => p[0])) - 2, xMax: Math.max(...V.map((p) => p[0])) + 2, points: V.map((p) => ({ x: p[0], y: p[1] })) }),
     };
   };
 })(window);

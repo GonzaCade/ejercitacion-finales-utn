@@ -16,23 +16,38 @@
 
   /** Slots del examen: cada punto elige un generador de su familia */
   const MATH_SLOTS = [
-    ['calculoNumerico', 'calculoNumerico', 'expresionesAlgebraicas', 'notacionCientifica'],
-    ['vectoresParametro', 'vectoresModulo', 'vectoresOperaciones', 'desplazamientos'],
-    ['polinomioParametros', 'polinomioGauss', 'polinomioTresParametros'],
-    ['polinomioDivisible', 'polinomioProductoCociente', 'inecuacionModulo', 'inecuacionLineal'],
-    ['ecuacionLog', 'ecuacionLog', 'ecuacionExp', 'ecuacionRacional', 'ecuacionRaiz'],
-    ['rectas', 'linealContexto', 'linealContexto', 'cuadrilatero'],
-    ['sistemas'],
-    ['cuadraticaContexto', 'cuadraticaContexto', 'cuadraticaInterseccion'],
-    ['trigTriangulos', 'trigIdentidades', 'lecturaGrafico', 'expresionesAlgebraicas'],
-    ['funcionTrig'],
+    ['calculoNumerico', 'calculoNumerico', 'expresionesAlgebraicas', 'notacionCientifica', 'fracciones', 'racionalizacion', 'intervalos', 'pasajeNotacion', 'conjuntosNumericos'],
+    ['vectoresParametro', 'vectoresModulo', 'vectoresOperaciones', 'desplazamientos', 'versorProductoEscalar'],
+    ['polinomioParametros', 'polinomioGauss', 'polinomioTresParametros', 'fraccionesAlgebraicas'],
+    ['polinomioDivisible', 'polinomioProductoCociente', 'inecuacionModulo', 'inecuacionLineal', 'inecuacionNoLineal', 'inecuacionProblema'],
+    ['ecuacionLog', 'ecuacionLog', 'ecuacionExp', 'ecuacionRacional', 'ecuacionRaiz', 'ecuacionLineal', 'ecuacionCuadratica', 'ecuacionBicuadratica', 'ecuacionModulo'],
+    ['rectas', 'linealContexto', 'linealContexto', 'rectaPendiente'],
+    ['sistemas', 'sistemas', 'sistemaClasificar'],
+    ['cuadraticaContexto', 'cuadraticaContexto', 'cuadraticaInterseccion', 'parabolaElementos'],
+    ['trigTriangulos', 'trigIdentidades', 'lecturaGrafico', 'expresionesAlgebraicas', 'angulosConversion', 'dominioFuncion', 'transformacionFunciones'],
+    ['funcionTrig', 'funcionTrig', 'funcionTrigTransformada'],
   ];
+  /** Nivel Final (primera instancia): sin logaritmos, ecuaciones irracionales, polinomios con parámetros ni funciones trigonométricas con parámetros */
+  const MATH_SLOTS_1 = [
+    ['expresionesAlgebraicas', 'racionalizacion', 'fracciones', 'notacionCientifica', 'pasajeNotacion', 'intervalos', 'calculoNumerico'],
+    ['vectoresParametro', 'vectoresOperaciones', 'versorProductoEscalar', 'desplazamientos'],
+    ['polinomioProductoCociente', 'fraccionesAlgebraicas'],
+    ['inecuacionModulo', 'inecuacionLineal', 'inecuacionProblema', 'inecuacionNoLineal'],
+    ['ecuacionModulo', 'ecuacionLineal', 'ecuacionCuadratica', 'ecuacionBicuadratica', 'ecuacionExp', 'ecuacionRacional'],
+    ['rectas', 'linealContexto', 'linealContexto', 'rectaPendiente'],
+    ['sistemas', 'sistemaClasificar'],
+    ['cuadraticaContexto', 'cuadraticaContexto', 'parabolaElementos'],
+    ['trigTriangulos', 'trigTriangulos', 'trigIdentidades', 'angulosConversion'],
+    ['lecturaGrafico', 'dominioFuncion', 'transformacionFunciones'],
+  ];
+  const LEVEL_LABEL = { primera: 'Final', recuperatorio: 'Recuperatorio' };
+  const levelOf = (cfg) => (cfg && cfg.level) || 'recuperatorio'; // exámenes guardados sin nivel = mezcla completa
   const FIS_SLOTS = [
-    ['unidades'], ['vectoresParalelos'], ['desplazamientos'], ['vectoresOperaciones'], ['tiroVertical'],
+    ['unidades', 'unidades', 'magnitudes'], ['vectoresParalelos'], ['desplazamientos'], ['vectoresOperaciones'], ['tiroVertical'],
     ['caidaLibre'], ['mruv'], ['mru'], ['graficoXT'], ['tiroVertical', 'mruv', 'mru', 'caidaLibre'],
   ];
   const SUBJECT_LABEL = { both: 'Precálculo + Física', math: 'Precálculo', fisica: 'Física' };
-  const MODE_LABEL = { none: 'Sin tiempo', optimo: '2 h · óptimo 8 min/ej.', maximo: '2 h · máximo 10 min/ej.' };
+  const MODE_LABEL = { none: 'Sin tiempo', optimo: '2 h · óptimo 8 min/ej.', maximo: '2 h · máximo 10 min/ej.', libre: '2 h · sin máximo por ej.' };
 
   const TOPICS = [
     { area: 'Precálculo', items: [
@@ -49,7 +64,16 @@
       ['Ecuaciones exponenciales, racionales y con radicales', 'Media'],
       ['Expresiones algebraicas: factorizar, simplificar, potencias, radicales', 'Media'],
       ['Desplazamientos con rosa de los vientos', 'Media'],
-      ['Lectura de gráficos y cuadrilátero de rectas', 'Baja'],
+      ['Lectura de gráficos (imagen, valor, signo)', 'Baja'],
+      ['Conjuntos, intervalos (unión, intersección, amplitud) y conjuntos numéricos', 'Muy baja'],
+      ['Fracciones, racionalización y pasajes de notación científica / unidades', 'Muy baja'],
+      ['Vector unitario, producto escalar y ángulo entre vectores', 'Muy baja'],
+      ['Ecuaciones lineales, cuadráticas, bicuadráticas y con módulo; planteo de problemas', 'Muy baja'],
+      ['Inecuaciones no lineales (tabla de signos) y problemas con inecuaciones', 'Muy baja'],
+      ['Fracciones algebraicas: suma, resta, producto y simplificación', 'Muy baja'],
+      ['Dominio y transformaciones de funciones; función trigonométrica transformada', 'Muy baja'],
+      ['Recta por dos puntos, ángulo de inclinación, parámetro k; elementos de la parábola', 'Muy baja'],
+      ['Clasificación de sistemas 2×2 (S.C.D., S.C.I., S.I.) y conversión grados ↔ radianes', 'Muy baja'],
     ] },
     { area: 'Física', items: [
       ['Pasajes de unidades (longitud, tiempo, velocidad)', 'Muy alta'],
@@ -60,6 +84,7 @@
       ['MRUV: aceleración, frenado, función velocidad', 'Alta'],
       ['MRU: encuentro y velocidad promedio', 'Alta'],
       ['Gráficos posición-tiempo', 'Media'],
+      ['Magnitudes físicas: fundamentales/derivadas y escalares/vectoriales', 'Muy baja'],
     ] },
   ];
 
@@ -117,9 +142,13 @@
   function showView(name) {
     state.view = name;
     $('#app').dataset.view = name;
+    document.documentElement.classList.toggle('home-fit', name === 'home');
+    $('#result-footer').classList.toggle('hidden', name !== 'result');
+    $('#header-icons').style.display = name === 'home' ? '' : 'none';
+    if (name !== 'home') closeHistoryMenu();
     ['home', 'exam', 'result'].forEach((v) => { const el = $(`#view-${v}`); el.classList.toggle('hidden', v !== name); if (v === name) { el.classList.remove('view'); void el.offsetWidth; el.classList.add('view'); } });
     window.scrollTo(0, 0);
-    if (name === 'exam') requestAnimationFrame(fitExam); else $('#exam-nav-root').innerHTML = '';
+    if (name === 'exam') { fitExam(); requestAnimationFrame(fitExam); } else { $('#exam-nav-root').innerHTML = ''; $('#app').style.paddingBottom = ''; }
   }
   const ls = {
     get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
@@ -134,21 +163,23 @@
 
   /* ---------------- Construcción del examen ---------------- */
   function buildExam(seed, config) {
-    const pick = new RNG(seed + '|pick|' + config.subject);
+    const level = levelOf(config), M = level === 'primera' ? MATH_SLOTS_1 : MATH_SLOTS;
+    const pick = new RNG(seed + '|pick|' + config.subject + (level === 'primera' ? '|1' : ''));
     let slots;
-    if (config.subject === 'math') slots = MATH_SLOTS.map((s, i) => ({ area: 'math', slot: i, pool: s }));
+    if (config.subject === 'math') slots = M.map((s, i) => ({ area: 'math', slot: i, pool: s }));
     else if (config.subject === 'fisica') slots = FIS_SLOTS.map((s, i) => ({ area: 'fisica', slot: i, pool: s }));
     else {
       const mi = pick.sample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 5).sort((a, b) => a - b);
       const fi = pick.sample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 5).sort((a, b) => a - b);
-      slots = [...mi.map((i) => ({ area: 'math', slot: i, pool: MATH_SLOTS[i] })), ...fi.map((i) => ({ area: 'fisica', slot: i, pool: FIS_SLOTS[i] }))];
+      slots = [...mi.map((i) => ({ area: 'math', slot: i, pool: M[i] })), ...fi.map((i) => ({ area: 'fisica', slot: i, pool: FIS_SLOTS[i] }))];
     }
     const used = new Set();
     return slots.map((s, n) => {
       let gen = pick.pick(s.pool);
       if (used.has(s.area + gen) && s.pool.length > 1) { const alt = s.pool.filter((g) => !used.has(s.area + g)); if (alt.length) gen = pick.pick(alt); }
       used.add(s.area + gen);
-      const ex = GEN[s.area][gen](new RNG(`${seed}|${n}|${gen}`));
+      const grng = new RNG(`${seed}|${n}|${gen}`); grng.level = level;
+      const ex = GEN[s.area][gen](grng);
       return { n, area: s.area, gen, ex };
     });
   }
@@ -243,6 +274,32 @@
     return { per, total, nota: Math.round(total * 10) / 10, aprobado: total >= PASS };
   }
 
+  /* ---------------- Sonido de aviso ---------------- */
+  let audioCtx = null;
+  /** Los navegadores solo permiten audio tras un gesto del usuario: se "desbloquea" con el primer toque o tecla. */
+  function unlockAudio() {
+    try {
+      if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) { /* sin audio disponible */ }
+  }
+  /** Pitido corto para avisar que se agotó el tiempo del punto. */
+  function beep() {
+    try {
+      unlockAudio(); if (!audioCtx) return;
+      const t0 = audioCtx.currentTime + 0.02;
+      [[880, 0], [880, 0.24]].forEach(([freq, off]) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, t0 + off);
+        g.gain.exponentialRampToValueAtTime(0.3, t0 + off + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + off + 0.18);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t0 + off); o.stop(t0 + off + 0.2);
+      });
+    } catch (e) { /* sin audio disponible */ }
+  }
+
   /* ---------------- Temporizador ---------------- */
   function now() { return Date.now(); }
   function timedMode() { return state.exam && state.exam.config.timed ? state.exam.config.mode : 'none'; }
@@ -273,7 +330,7 @@
       if (ex.phase === 'seq') {
         const r = LIMITS[mode] - exerciseElapsed(ex.idx);
         html += `<span class="font-mono font-bold ${r < 60 ? 'timer-danger px-1' : 'text-brand'}" title="Tiempo del ejercicio">${mode === 'optimo' ? '⏳' : '⛔'} ${fmtTime(r)}</span>`;
-      } else html += `<span class="chip bg-amber-100 text-amber-800">Revisión</span>`;
+      } else if (mode !== 'libre') html += `<span class="chip bg-amber-100 text-amber-800">Revisión</span>`;
     }
     box.innerHTML = html;
     const bar = $('#ex-timebar');
@@ -283,9 +340,10 @@
   /* ---------------- Flujo del examen ---------------- */
   function persistExam() { if (state.exam) ls.set(LS_EXAM, state.exam); }
   function startExam(config, seed) {
+    unlockAudio();
     seed = seed || newSeed();
     state.exercises = buildExam(seed, config);
-    state.exam = { seed, config, answers: [], idx: 0, phase: config.timed ? 'seq' : 'free', startedAt: now(), exStart: now(), used: new Array(10).fill(0), locked: new Array(10).fill(false), submittedAt: null };
+    state.exam = { seed, config, answers: [], idx: 0, phase: config.timed && config.mode !== 'libre' ? 'seq' : 'free', startedAt: now(), exStart: now(), used: new Array(10).fill(0), locked: new Array(10).fill(false), submittedAt: null };
     ensureAnswers();
     persistExam();
     ls.set(LS_CONFIG, config);
@@ -318,16 +376,15 @@
     const ex = state.exam, mode = timedMode();
     ex.used[ex.idx] = exerciseElapsed(ex.idx);
     if (mode === 'maximo') ex.locked[ex.idx] = true;
-    if (auto) toast(mode === 'maximo' ? `Se agotó el tiempo del punto ${ex.idx + 1}: quedó cerrado.` : `Tiempo óptimo del punto ${ex.idx + 1} agotado. Seguimos con el siguiente.`);
+    if (auto) beep();
+    if (auto) toast(mode === 'maximo' ? `Se agotó el tiempo del punto ${ex.idx + 1}.` : `Tiempo óptimo del punto ${ex.idx + 1} agotado. Seguimos con el siguiente.`);
     if (ex.idx < state.exercises.length - 1) { ex.exStart = now(); ex.idx += 1; persistExam(); renderExam(); return; }
-    if (mode === 'optimo') {
-      ex.phase = 'review';
-      const first = state.exercises.findIndex((_, k) => !isAnswered(k));
-      ex.idx = first >= 0 ? first : 0; ex.exStart = now(); persistExam(); renderExam();
-      toast(`Recorriste los 10 puntos. Tenés ${fmtTime(globalRemaining())} para completar lo que falte.`);
-      return;
-    }
-    submitExam(true, 'Entregaste el último punto: el examen se corrigió.');
+    // terminó el recorrido: con tiempo sobrante puede volver a cualquier punto y cambiar resultados antes de entregar
+    ex.phase = 'review';
+    ex.locked.fill(false);
+    const first = state.exercises.findIndex((_, k) => !isAnswered(k));
+    ex.idx = first >= 0 ? first : 0; ex.exStart = now(); persistExam(); renderExam();
+    toast(`Recorriste los 10 puntos. Tenés ${fmtTime(globalRemaining())} para revisar y cambiar resultados antes de entregar.`);
   }
   async function submitExam(auto = false, msg = 'Tiempo agotado: el examen se entregó automáticamente.') {
     if (!auto) {
@@ -339,7 +396,7 @@
     const ex = state.exam; ex.used[ex.idx] = exerciseElapsed(ex.idx); ex.submittedAt = now();
     state.result = gradeExam();
     const hist = ls.get(LS_HISTORY, []);
-    hist.unshift({ date: ex.submittedAt, seed: ex.seed, subject: ex.config.subject, mode: ex.config.timed ? ex.config.mode : 'none', hints: !!ex.config.hints, nota: state.result.nota, aprobado: state.result.aprobado, secs: Math.round((ex.submittedAt - ex.startedAt) / 1000) });
+    hist.unshift({ date: ex.submittedAt, seed: ex.seed, subject: ex.config.subject, mode: ex.config.timed ? ex.config.mode : 'none', level: levelOf(ex.config), hints: !!ex.config.hints, nota: state.result.nota, aprobado: state.result.aprobado, secs: Math.round((ex.submittedAt - ex.startedAt) / 1000) });
     ls.set(LS_HISTORY, hist.slice(0, 20));
     ls.del(LS_EXAM);
     renderResult();
@@ -348,19 +405,42 @@
     if (auto) toast(msg);
   }
 
+  /* ---------------- Placeholders de ejemplo (formato, no resultado) ---------------- */
+  /** Ejemplo de cómo escribir una respuesta numérica; depende del tipo de dato esperado y es estable para cada campo. */
+  function exampleFor(item, i, slot = 0, ref) {
+    const h = U.hashString(`${i}|${item.key}|${slot}`);
+    const label = (item.label || '').toLowerCase();
+    const ans = ref !== undefined ? ref : (Array.isArray(item.answer) ? item.answer[slot % item.answer.length] : item.answer);
+    const I = [2, 3, 4, 5, 6, 7, 8, 9, 12, 15];
+    const int = (o = 0) => I[(h + o) % I.length];
+    const positive = /tiempo|instante|per[ií]odo|frecuencia|amplitud|distancia|altura|velocidad|m[oó]dulo|[aá]rea|longitud|per[ií]metro|costo|cantidad|edad|lado|largo|ancho|pulsaci[oó]n|\((s|m|km|h|hz|m\/s)\)/.test(label);
+    const negOk = !positive || (Number.isFinite(ans) && ans < 0);
+    const minus = negOk && h % 3 === 0 ? '-' : '';
+    const sgn = (v) => `${minus}${v}`;
+    if (/exponente/.test(label)) return `${negOk ? '-' : ''}${2 + (h % 6)}`;
+    if (/mantisa/.test(label)) return `${1 + (h % 8)},${1 + ((h >>> 3) % 9)}`;
+    if (/radianes|\brad\b/.test(label)) return ['pi/6', 'pi/4', '2pi/3', '1,57'][h % 4];
+    if (/ángulo|grados|θ/.test(label) || item.unit === '°') return ['45', '37,5', '120', '60'][h % 4];
+    if (/\b(amplitud|período|frecuencia|pulsación)\b/.test(label) && !Number.isInteger(ans)) return ['0,5', '3,14', '2pi', '1,25'][h % 4];
+    if (!Number.isFinite(ans)) return sgn(int());
+    if (Math.abs(ans - Math.round(ans)) < 1e-9) return sgn(int(1));
+    const f = U.toFraction(ans, 12);
+    if (f) { const d = [2, 3, 4, 5, 7][h % 5]; let n = 1 + (int(2) % (2 * d)); while (U.gcd(n, d) !== 1) n += 1; return `${minus}${n}/${d}`; }
+    return `${minus}${1 + (h % 9)},${[25, 5, 75, 4][(h >>> 2) % 4]}`;
+  }
+
   /* ---------------- Render: inputs ---------------- */
   const inputBase = (i, key, sub, val, placeholder, extra = '') => `<input type="text" inputmode="text" autocomplete="off" spellcheck="false" class="field font-mono text-center ${extra}" data-i="${i}" data-key="${key}" data-sub="${sub}" value="${escapeHtml(val)}" placeholder="${placeholder}">`;
   function itemHtml(i, item, val, disabled) {
     let body = '';
-    const ph = 'Ej: 2,5';
     switch (item.type) {
-      case 'number': body = `<div class="flex items-center gap-2 max-w-xs">${inputBase(i, item.key, '0', val, ph)}${item.unit ? `<span class="text-sm text-slate-500">${item.unit}</span>` : ''}</div>`; break;
-      case 'vector': body = `<div class="flex items-center gap-1 max-w-xs"><span class="text-lg text-slate-500">(</span>${inputBase(i, item.key, '0', val[0], 'x')}<span class="text-lg text-slate-500">;</span>${inputBase(i, item.key, '1', val[1], 'y')}<span class="text-lg text-slate-500">)</span></div>`; break;
-      case 'vectorset': body = `<div class="grid gap-2 sm:grid-cols-2">${val.map((v, k) => `<div class="flex items-center gap-1"><span class="w-6 text-xs font-bold text-slate-500">${(item.labels || [])[k] || ''}</span><span class="text-lg text-slate-500">(</span>${inputBase(i, item.key, `${k}.0`, v[0], 'x')}<span class="text-lg text-slate-500">;</span>${inputBase(i, item.key, `${k}.1`, v[1], 'y')}<span class="text-lg text-slate-500">)</span></div>`).join('')}</div>`; break;
-      case 'set': body = `<div class="flex flex-wrap items-center gap-3">${val.v.map((v, k) => `<label class="flex items-center gap-1 text-xs font-bold text-slate-500">${(item.labels || [])[k] || `x${k + 1}`}${inputBase(i, item.key, `v.${k}`, v, ph, 'w-32')}</label>`).join('')}
+      case 'number': body = `<div class="flex items-center gap-2 max-w-xs">${inputBase(i, item.key, '0', val, exampleFor(item, i))}${item.unit ? `<span class="text-sm text-slate-500">${item.unit}</span>` : ''}</div>`; break;
+      case 'vector': body = `<div class="flex items-center gap-1 max-w-xs"><span class="text-lg text-slate-500">(</span>${inputBase(i, item.key, '0', val[0], exampleFor(item, i, 0))}<span class="text-lg text-slate-500">;</span>${inputBase(i, item.key, '1', val[1], exampleFor(item, i, 1))}<span class="text-lg text-slate-500">)</span></div>`; break;
+      case 'vectorset': body = `<div class="grid gap-2 sm:grid-cols-2">${val.map((v, k) => `<div class="flex items-center gap-1"><span class="w-6 text-xs font-bold text-slate-500">${(item.labels || [])[k] || ''}</span><span class="text-lg text-slate-500">(</span>${inputBase(i, item.key, `${k}.0`, v[0], exampleFor(item, i, 2 * k, item.answer[k % item.answer.length][0]))}<span class="text-lg text-slate-500">;</span>${inputBase(i, item.key, `${k}.1`, v[1], exampleFor(item, i, 2 * k + 1, item.answer[k % item.answer.length][1]))}<span class="text-lg text-slate-500">)</span></div>`).join('')}</div>`; break;
+      case 'set': body = `<div class="flex flex-wrap items-center gap-3">${val.v.map((v, k) => `<label class="flex items-center gap-1 text-xs font-bold text-slate-500">${(item.labels || [])[k] || `x${k + 1}`}${inputBase(i, item.key, `v.${k}`, v, exampleFor(item, i, k, item.answer.length ? item.answer[k % item.answer.length] : 3), 'w-32')}</label>`).join('')}
         ${item.allowEmpty ? `<label class="flex items-center gap-1.5 text-xs text-slate-600"><input type="checkbox" class="accent-brand" data-i="${i}" data-key="${item.key}" data-sub="none" ${val.none ? 'checked' : ''}> Sin solución</label>` : ''}</div>
         <p class="hint">Dejá vacíos los campos que no uses. El orden no importa.</p>`; break;
-      case 'poly': body = `<div class="flex flex-wrap items-center gap-1">${val.map((v, k) => { const p = item.degree - k; return `<span class="flex items-center gap-1">${inputBase(i, item.key, String(k), v, '0', 'w-20')}<span class="text-sm text-slate-600">${p === 0 ? '' : p === 1 ? (item.variable || 'x') : `${item.variable || 'x'}<sup>${p}</sup>`}${k < val.length - 1 ? ' +' : ''}</span></span>`; }).join('')}</div><p class="hint">Completá con 0 los términos que falten.</p>`; break;
+      case 'poly': body = `<div class="flex flex-wrap items-center gap-1">${val.map((v, k) => { const p = item.degree - k; return `<span class="flex items-center gap-1">${inputBase(i, item.key, String(k), v, exampleFor(item, i, k, 2), 'w-20')}<span class="text-sm text-slate-600">${p === 0 ? '' : p === 1 ? (item.variable || 'x') : `${item.variable || 'x'}<sup>${p}</sup>`}${k < val.length - 1 ? ' +' : ''}</span></span>`; }).join('')}</div><p class="hint">Completá con 0 los términos que falten.</p>`; break;
       case 'choice': body = `<div class="grid gap-2 sm:grid-cols-2">${item.options.map((o, k) => `<label class="option !p-3 text-sm"><input type="radio" name="c-${i}-${item.key}" class="mt-0.5 accent-brand" data-i="${i}" data-key="${item.key}" data-sub="choice" value="${k}" ${val === k ? 'checked' : ''} ${disabled ? 'disabled' : ''}><span>${o}</span></label>`).join('')}</div>`; break;
       default: break;
     }
@@ -380,15 +460,14 @@
     }).join('');
     const seqTimed = mode !== 'none' && ex.phase === 'seq';
     const next = i < state.exercises.length - 1;
-    const primaryLabel = seqTimed ? (mode === 'maximo' ? (next ? 'Entregar punto y seguir' : 'Entregar punto y finalizar') : (next ? 'Siguiente punto' : 'Terminar recorrido')) : (next ? 'Siguiente' : null);
-    const helpTxt = mode === 'none' ? 'Navegación libre. Podés volver a cualquier punto antes de entregar.' : ex.phase === 'seq' ? (mode === 'optimo' ? 'Tiempo óptimo: 8 min por punto. Al vencer pasa al siguiente; al final podés completar lo que falte con el tiempo restante.' : 'Tiempo máximo: 10 min por punto. Al vencer o entregar, el punto queda cerrado.') : 'Fase de revisión: navegá libremente y entregá antes de que se agote el tiempo total.';
+    const primaryLabel = seqTimed ? (mode === 'maximo' ? (next ? 'Entregar punto y seguir' : 'Terminar recorrido') : (next ? 'Siguiente punto' : 'Terminar recorrido')) : (next ? 'Siguiente' : null);
+    const helpTxt = mode === 'none' ? 'Navegación libre. Podés volver a cualquier punto antes de entregar.' : mode === 'libre' ? 'Tiempo total de 2 h, sin límite por ejercicio. Navegá libremente y entregá antes de que se agote el reloj.' : ex.phase === 'seq' ? (mode === 'optimo' ? 'Tiempo óptimo: 8 min por punto. Al vencer pasa al siguiente; al final podés completar lo que falte con el tiempo restante.' : 'Tiempo máximo: 10 min por punto. Al vencer o entregar pasa al siguiente; al final, si te sobra tiempo, podés volver a cualquier punto.') : 'Fase de revisión: navegá libremente y entregá antes de que se agote el tiempo total.';
     $('#view-exam').innerHTML = `<div id="exam-shell" class="flex flex-col">
       <div class="mb-3 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div class="-mx-2 flex shrink-0 items-center gap-2 overflow-x-auto px-2 py-1.5 [scrollbar-width:none]" id="dots">${dots}</div>
         <div class="flex min-w-0 items-center gap-2 text-xs text-slate-500"><span class="chip bg-slate-200 text-slate-700 font-mono whitespace-nowrap shrink-0">Tema ${ex.seed}</span><span class="hidden max-w-sm truncate text-[11px] leading-tight lg:inline" title="${escapeHtml(helpTxt)}">${helpTxt}</span></div>
       </div>
       <article class="card flex min-h-0 flex-1 flex-col overflow-hidden ${animate ? 'animate-fade-up' : ''}" id="exercise-card">
-        ${mode !== 'none' && ex.phase === 'seq' ? '<div class="h-1.5 w-full shrink-0 bg-slate-200"><div id="ex-timebar" class="h-full w-full origin-left bg-brand transition-transform duration-1000 ease-linear"></div></div>' : ''}
         <div class="shrink-0 border-b border-slate-100 bg-white px-5 pb-3 pt-4 sm:px-8">
           <div class="flex flex-wrap items-center gap-2">
             <span class="chip ${e.area === 'math' ? 'bg-brand-light text-brand' : 'bg-cyan-100 text-cyan-900'}">${e.area === 'math' ? 'Precálculo' : 'Física'}</span>
@@ -408,7 +487,7 @@
           </div>
         </div>
       </article></div>`;
-    $('#exam-nav-root').innerHTML = `<nav id="exam-nav" class="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white-a95 backdrop-blur"><div class="mx-auto flex max-w-6xl items-center gap-2 px-4 py-3 sm:px-6">
+    $('#exam-nav-root').innerHTML = `<nav id="exam-nav" class="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white-a95 backdrop-blur">${mode !== 'none' && ex.phase === 'seq' ? '<div class="h-1.5 w-full shrink-0 bg-slate-200"><div id="ex-timebar" class="h-full w-full origin-left bg-brand transition-transform duration-1000 ease-linear"></div></div>' : ''}<div class="mx-auto flex max-w-6xl items-center gap-2 px-4 py-3 sm:px-6">
         ${!seqTimed ? `<button type="button" class="btn-secondary" data-nav="prev" ${i === 0 ? 'disabled' : ''}>← Anterior</button>` : ''}
         <span class="mx-auto text-xs text-slate-500">${i + 1} / ${state.exercises.length}</span>
         ${primaryLabel ? `<button type="button" class="btn-primary" data-nav="next">${primaryLabel} →</button>` : ''}
@@ -422,12 +501,15 @@
     if (!disabled) { const first = $('#exercise-card input.field'); if (first && window.matchMedia('(min-width: 640px)').matches) first.focus({ preventScroll: true }); }
   }
 
-  /** El ejercicio ocupa exactamente el alto visible: el card scrollea por dentro y la botonera queda fija abajo */
+  /** El ejercicio ocupa exactamente el alto visible (también en móvil): los números de punto y el título "Ejercicio N" quedan fijos,
+   *  solo scrollea el enunciado/resultados por dentro y la botonera queda fija abajo. */
   function fitExam() {
-    const shell = $('#exam-shell'), nav = $('#exam-nav');
+    const shell = $('#exam-shell'), nav = $('#exam-nav'), app = $('#app');
     if (!shell || !nav || state.view !== 'exam' || $('#view-exam').classList.contains('hidden')) return;
-    window.scrollTo(0, 0);
-    const top = shell.getBoundingClientRect().top;
+    app.style.paddingBottom = '';
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    // Posición del shell respecto del documento (independiente del scroll en curso y de las animaciones con transform)
+    let top = 0; for (let el = shell; el; el = el.offsetParent) top += el.offsetTop;
     const h = nav.getBoundingClientRect().top - top - 10;
     shell.style.height = `${Math.max(h, 320)}px`;
   }
@@ -450,7 +532,7 @@
           <span class="ml-auto font-mono text-sm font-bold ${p.score === 1 ? 'text-emerald-600' : p.score > 0 ? 'text-amber-600' : 'text-red-600'}">${fmt(p.score, 2)} / 1</span>
         </div>
         <div class="p-5 sm:p-6">
-          <details class="group"><summary class="cursor-pointer text-sm font-semibold text-slate-600 hover:text-brand">Ver enunciado</summary><div class="statement mt-2 text-sm">${e.ex.statement}${e.ex.figure ? e.ex.figure : ''}</div></details>
+          <details class="group statement-details"><summary class="cursor-pointer text-sm font-semibold text-slate-600 hover:text-brand">Ver enunciado</summary><div class="statement mt-2 text-sm">${e.ex.statement}${e.ex.figure ? e.ex.figure : ''}</div></details>
           <div class="mt-4 overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wide text-slate-500"><th class="py-1 pr-2">Ítem</th><th class="py-1 pr-2">Tu respuesta</th><th class="py-1 pr-2">Correcto</th><th class="py-1"></th></tr></thead><tbody>
             ${p.items.map((it) => `<tr class="border-t border-slate-100"><td class="py-1.5 pr-2 text-slate-700">${it.item.label}</td><td class="py-1.5 pr-2 font-mono ${it.ok ? 'text-emerald-700' : 'text-red-700'}">${it.user}</td><td class="py-1.5 pr-2 font-mono">${it.correct}</td><td class="py-1.5 text-center">${it.ok ? '✅' : '❌'}</td></tr>`).join('')}
           </tbody></table></div>
@@ -463,13 +545,14 @@
         <section class="card p-6 sm:p-8 ${r.aprobado ? 'border-emerald-300' : 'border-red-300'}">
           <div class="flex flex-col gap-6 sm:flex-row sm:items-center">
             <div class="flex items-center gap-4">
-              <img src="assets/logo.png" alt="UTN Haedo" class="h-16 w-auto" decoding="async">
+              <img src="assets/logo.png?v=2" alt="UTN Haedo" class="h-16 w-auto" decoding="async">
               <div><p class="text-xs font-bold uppercase tracking-wide text-slate-500">Ejercitación para finales UTN</p><h2 class="text-2xl font-extrabold text-brand">Resultado del examen</h2>
-              <p class="text-sm text-slate-600">${SUBJECT_LABEL[ex.config.subject]} · ${MODE_LABEL[ex.config.timed ? ex.config.mode : 'none']} · Tema <span class="font-mono">${ex.seed}</span> · ${new Date(ex.submittedAt).toLocaleString('es-AR')}</p></div>
+              <p class="text-sm text-slate-600">${SUBJECT_LABEL[ex.config.subject]} · ${LEVEL_LABEL[levelOf(ex.config)]} · ${MODE_LABEL[ex.config.timed ? ex.config.mode : 'none']} · Tema <span class="font-mono">${ex.seed}</span> · ${new Date(ex.submittedAt).toLocaleString('es-AR')}</p></div>
             </div>
-            <div class="sm:ml-auto flex items-center gap-5">
+            <div class="sm:ml-auto flex items-center gap-3 sm:gap-5 max-sm:w-full">
               <div class="text-center"><p class="text-5xl font-black ${r.aprobado ? 'text-emerald-600' : 'text-red-600'} animate-pop">${fmt(r.nota, 1)}</p><p class="text-xs text-slate-500">nota / 10</p></div>
-              <div><span class="chip ${r.aprobado ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} text-sm px-3 py-1">${r.aprobado ? 'APROBADO' : 'DESAPROBADO'}</span><p class="mt-1 text-xs text-slate-500">Se aprueba con 70% (7)</p></div>
+              <div class="min-w-0"><span class="chip ${r.aprobado ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} text-sm px-3 py-1 max-sm:px-2 max-sm:text-xs">${r.aprobado ? 'APROBADO' : 'DESAPROBADO'}</span><p class="mt-1 text-xs text-slate-500">Se aprueba con 70% (7)</p></div>
+              <button type="button" class="btn-secondary no-print ml-auto max-w-[4.75rem] shrink-0 !px-2 !py-1.5 text-center text-[11px] leading-tight sm:hidden" data-act="retry">↻ Repetir este tema</button>
             </div>
           </div>
           <div class="mt-6 grid gap-3 sm:grid-cols-4 text-sm">
@@ -481,9 +564,7 @@
           <div class="mt-4 flex flex-wrap gap-1.5">${r.per.map((p) => `<a href="#res-${p.i}" class="dot ${p.score === 1 ? 'dot-ok' : p.score > 0 ? 'dot-partial' : 'dot-bad'}" title="${escapeHtml(state.exercises[p.i].ex.title)}">${p.i + 1}</a>`).join('')}</div>
           <div class="mt-6 flex flex-wrap gap-2 no-print">
             <button type="button" class="btn-primary" data-act="pdf">⬇ Descargar PDF</button>
-            <button type="button" class="btn-secondary" data-act="retry">↻ Repetir este tema</button>
-            <button type="button" class="btn-secondary" data-act="new">✨ Nuevo examen</button>
-            <button type="button" class="btn-ghost" data-act="home">Inicio</button>
+            <button type="button" class="btn-secondary max-sm:hidden" data-act="retry">↻ Repetir este tema</button>
           </div>
         </section>
         ${cards}
@@ -543,27 +624,48 @@
       const avg = hist.reduce((s, h) => s + h.nota, 0) / hist.length;
       html += `<p class="mt-1 text-xs text-slate-500">${hist.length} intento${hist.length > 1 ? 's' : ''} · promedio ${fmt(avg, 1)} · aprobados ${hist.filter((h) => h.aprobado).length}</p><ul class="mt-3 divide-y divide-slate-100">`;
       hist.slice(0, 8).forEach((h) => {
-        html += `<li class="flex items-center gap-3 py-2 text-sm"><span class="font-mono text-lg font-black ${h.aprobado ? 'text-emerald-600' : 'text-red-600'}">${fmt(h.nota, 1)}</span><div class="min-w-0 flex-1"><p class="truncate font-semibold text-slate-700">${SUBJECT_LABEL[h.subject]}</p><p class="truncate text-xs text-slate-500">${new Date(h.date).toLocaleDateString('es-AR')} · ${MODE_LABEL[h.mode]} · ${fmtTime(h.secs)}</p></div><button type="button" class="btn-ghost !px-2 !py-1 text-xs" data-retry="${h.seed}" data-subject="${h.subject}" title="Repetir este tema con la configuración de tiempo y ayudas elegida arriba">↻ Repetir ${h.seed}</button></li>`;
+        html += `<li class="flex items-center gap-3 py-2 text-sm"><span class="font-mono text-lg font-black ${h.aprobado ? 'text-emerald-600' : 'text-red-600'}">${fmt(h.nota, 1)}</span><div class="min-w-0 flex-1"><p class="truncate font-semibold text-slate-700">${SUBJECT_LABEL[h.subject]}</p><p class="truncate text-xs text-slate-500">${new Date(h.date).toLocaleDateString('es-AR')} · ${LEVEL_LABEL[h.level || 'recuperatorio']} · ${MODE_LABEL[h.mode]} · ${fmtTime(h.secs)}</p></div><button type="button" class="btn-ghost !px-2 !py-1 text-xs" data-retry="${h.seed}" data-subject="${h.subject}" title="Repetir este tema con el nivel, el tiempo y las ayudas elegidas">↻ Repetir ${h.seed}</button></li>`;
       });
       html += '</ul>';
     }
     $('#history-card').innerHTML = html;
-    const fq = { 'Muy alta': 'bg-brand text-white', Alta: 'bg-brand-light text-brand', Media: 'bg-slate-200 text-slate-700', Baja: 'bg-slate-100 text-slate-500' };
-    $('#topics-box').innerHTML = TOPICS.map((t) => `<details class="mt-2 rounded-xl border border-slate-200 p-3" open><summary class="cursor-pointer text-sm font-semibold text-slate-700">${t.area}</summary><ul class="mt-2 space-y-1.5">${t.items.map(([n, f]) => `<li class="flex items-start gap-2 text-xs"><span class="chip ${fq[f]} shrink-0 whitespace-nowrap min-w-16 justify-center" title="Frecuencia en los finales: ${f}">${f}</span><span class="text-slate-600">${n}</span></li>`).join('')}</ul></details>`).join('');
+    $('#history-menu').innerHTML = html;
+    const badge = $('#history-badge'), n = hist.length + (saved ? 1 : 0);
+    badge.textContent = saved ? '!' : String(hist.length); badge.classList.toggle('hidden', n === 0);
+    const fq = { 'Muy alta': 'bg-brand text-white', Alta: 'bg-brand-light text-brand', Media: 'bg-slate-200 text-slate-700', Baja: 'bg-slate-100 text-slate-500', 'Muy baja': 'bg-slate-100 text-slate-500' };
+    $('#topics-box').innerHTML = TOPICS.map((t) => `<details class="mt-2 rounded-xl border border-slate-200 p-3" open><summary class="cursor-pointer text-sm font-semibold text-slate-700">${t.area}</summary><ul class="mt-2 space-y-1.5">${t.items.map(([n, f]) => `<li class="flex items-start gap-2 text-xs"><span class="chip ${fq[f]} shrink-0 whitespace-nowrap min-w-16 justify-center" title="${f === 'Muy baja' ? 'Tema de la guía de la cátedra, poco frecuente en los finales anteriores. Frecuencia: Muy baja' : 'Frecuencia en los finales: ' + f}">${f}</span><span class="text-slate-600">${n}</span></li>`).join('')}</ul></details>`).join('');
     const cfg = ls.get(LS_CONFIG, null);
     if (cfg) {
       const f = $('#config-form');
       (f.elements.subject.value = cfg.subject);
+      f.elements.level.value = cfg.level || 'primera';
       f.elements.timed.value = cfg.timed ? 'yes' : 'no';
       if (cfg.mode) f.elements.mode.value = cfg.mode;
       f.elements.hints.checked = false; // las ayudas siempre arrancan desactivadas
       syncModeBox();
     }
   }
-  function syncModeBox() { const on = $('#config-form').elements.timed.value === 'yes'; const b = $('#mode-box'); b.classList.toggle('opacity-40', !on); b.classList.toggle('pointer-events-none', !on); }
+  function syncModeBox() {
+    const f = $('#config-form'), on = f.elements.timed.value === 'yes'; const b = $('#mode-box'); b.classList.toggle('opacity-40', !on); b.classList.toggle('pointer-events-none', !on);
+    // selects de la versión mobile (reflejan los radios)
+    $('#timed-select').value = on ? 'yes' : 'no';
+    $('#mode-select').value = f.elements.mode.value;
+    $('#mode-select-wrap').classList.toggle('hidden', !on);
+    $('#mode-select-desc').textContent = { optimo: 'Al vencer pasa al siguiente. Al terminar los 10 puntos, completás lo que falte con el tiempo restante.', maximo: 'Cada punto pasa al siguiente al vencer o entregarlo. Al final, con el tiempo sobrante, podés volver a cualquier punto.', libre: 'Solo corre el reloj de las 2 horas. Navegás libremente entre los puntos.' }[f.elements.mode.value];
+  }
+  function setRadio(name, value) { const r = $(`#config-form input[name="${name}"][value="${value}"]`); if (r) r.checked = true; syncModeBox(); }
+  function closeHistoryMenu() { $('#history-menu').classList.add('hidden'); $('#btn-history').setAttribute('aria-expanded', 'false'); }
+  function openTopics() {
+    const tmp = document.createElement('div'); tmp.innerHTML = $('#topics-card').innerHTML;
+    const h = tmp.querySelector('h2'); if (h) h.remove();
+    $('#topics-modal-body').innerHTML = tmp.innerHTML;
+    const m = $('#topics-modal'); m.classList.remove('hidden'); m.classList.add('flex'); document.body.classList.add('overflow-hidden');
+    $('#topics-modal-body').scrollTop = 0; $('#topics-close').focus();
+  }
+  function closeTopics() { const m = $('#topics-modal'); m.classList.add('hidden'); m.classList.remove('flex'); document.body.classList.remove('overflow-hidden'); $('#btn-topics').focus(); }
   function readConfig() {
     const f = $('#config-form');
-    return { subject: f.elements.subject.value, timed: f.elements.timed.value === 'yes', mode: f.elements.mode.value, hints: f.elements.hints.checked };
+    return { subject: f.elements.subject.value, level: f.elements.level.value, timed: f.elements.timed.value === 'yes', mode: f.elements.mode.value, hints: f.elements.hints.checked };
   }
 
   /* ---------------- Eventos ---------------- */
@@ -579,12 +681,22 @@
       if (ls.get(LS_EXAM, null)) { modal({ title: 'Examen en curso', body: 'Hay un examen sin entregar guardado. Si empezás uno nuevo se descarta. ¿Continuar?', confirmText: 'Empezar nuevo', danger: true }).then((ok) => { if (ok) { ls.del(LS_EXAM); startExam(cfg, seed); } }); return; }
       startExam(cfg, seed);
     }
-    $('#history-card').addEventListener('click', (e) => {
+    $('#timed-select').addEventListener('change', (e) => { setRadio('timed', e.target.value); });
+    $('#mode-select').addEventListener('change', (e) => { setRadio('mode', e.target.value); });
+    $('#btn-history').addEventListener('click', (e) => { e.stopPropagation(); const m = $('#history-menu'); const open = m.classList.toggle('hidden') === false; $('#btn-history').setAttribute('aria-expanded', String(open)); });
+    document.addEventListener('click', (e) => { if (!e.target.closest('#history-menu') && !e.target.closest('#btn-history')) closeHistoryMenu(); });
+    $('#btn-topics').addEventListener('click', openTopics);
+    $('#topics-close').addEventListener('click', closeTopics);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeTopics(); closeHistoryMenu(); } });
+    const onHistoryClick = (e) => {
       const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.act || b.dataset.retry) closeHistoryMenu();
       if (b.dataset.act === 'resume') { const saved = ls.get(LS_EXAM, null); if (saved) resumeExam(saved); }
       else if (b.dataset.act === 'discard') { modal({ title: 'Descartar examen', body: 'Se perderán las respuestas cargadas.', confirmText: 'Descartar', danger: true }).then((ok) => { if (ok) { ls.del(LS_EXAM); renderHome(); } }); }
-      else if (b.dataset.retry) { launch({ ...readConfig(), subject: b.dataset.subject }, normSeed(b.dataset.retry)); toast(`Repetís el tema ${b.dataset.retry} con la configuración de tiempo y ayudas actual.`); }
-    });
+      else if (b.dataset.retry) { launch({ ...readConfig(), subject: b.dataset.subject }, normSeed(b.dataset.retry)); toast(`Repetís el tema ${b.dataset.retry} con el nivel, el tiempo y las ayudas actuales.`); }
+    };
+    $('#history-card').addEventListener('click', onHistoryClick);
+    $('#history-menu').addEventListener('click', onHistoryClick);
     $('#brand').addEventListener('click', async (e) => {
       e.preventDefault();
       if (state.view === 'exam') { const ok = await modal({ title: 'Salir del examen', body: 'El examen queda guardado y podés continuarlo desde el inicio (el tiempo sigue corriendo si es cronometrado).', confirmText: 'Ir al inicio' }); if (!ok) return; stopTimer(); }
@@ -617,13 +729,16 @@
     $('#exam-nav-root').addEventListener('click', onExamClick);
     examView.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('input.field')) { e.preventDefault(); const inputs = $$('input.field', examView); const k = inputs.indexOf(e.target); if (k >= 0 && k < inputs.length - 1) inputs[k + 1].focus(); } });
 
-    $('#view-result').addEventListener('click', (e) => {
+    const onResultClick = (e) => {
       const b = e.target.closest('[data-act]'); if (!b) return;
       if (b.dataset.act === 'pdf') downloadPdf(b);
       else if (b.dataset.act === 'retry') startExam(state.exam.config, state.exam.seed);
       else if (b.dataset.act === 'new') startExam(state.exam.config, null);
       else if (b.dataset.act === 'home') { renderHome(); showView('home'); }
-    });
+    };
+    $('#view-result').addEventListener('click', onResultClick);
+    $('#result-footer').addEventListener('click', onResultClick);
+    ['pointerdown', 'keydown'].forEach((t) => document.addEventListener(t, unlockAudio, { passive: true }));
     window.addEventListener('resize', () => { clearTimeout(state._fit); state._fit = setTimeout(fitExam, 80); });
     document.addEventListener('visibilitychange', () => { if (!document.hidden && state.view === 'exam') tick(); });
     window.addEventListener('beforeunload', () => { if (state.exam && state.view === 'exam') { state.exam.used[state.exam.idx] = exerciseElapsed(state.exam.idx); state.exam.exStart = now(); persistExam(); } });
@@ -633,6 +748,7 @@
   function init() {
     bind();
     renderHome();
+    document.documentElement.classList.add('home-fit');
     const saved = ls.get(LS_EXAM, null);
     if (saved && saved.config) {
       // ofrecer continuar desde la tarjeta de historial; si el examen es cronometrado lo retomamos directo

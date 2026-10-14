@@ -36,6 +36,7 @@ app/
 ├── js/charts.js        # gráficos (Chart.js bajo demanda) y figuras SVG
 ├── js/gen-math-1.js    # generadores de Precálculo (números, vectores, polinomios, ecuaciones)
 ├── js/gen-math-2.js    # generadores de Precálculo (rectas, sistemas, cuadráticas, trigonometría…)
+├── js/gen-guia.js      # temas de la guía de la cátedra (intervalos, ecuaciones, dominio, magnitudes…)
 ├── js/gen-fisica.js    # generadores de Física (unidades, vectores, cinemática)
 ├── js/app.js           # flujo del examen, temporizadores, corrección, PDF, historial
 └── test/gen-test.js    # prueba de todos los generadores: node test/gen-test.js 200
