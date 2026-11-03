@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const window = global.window = global;
-for (const f of ['utils.js', 'charts.js', 'gen-math-1.js', 'gen-math-2.js', 'gen-guia.js', 'gen-fisica.js']) {
+for (const f of ['utils.js', 'charts.js', 'gen-math-1.js', 'gen-math-2.js', 'gen-guia.js', 'gen-final.js', 'gen-fisica.js']) {
   new Function(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'))();
 }
 const { RNG } = window.U;

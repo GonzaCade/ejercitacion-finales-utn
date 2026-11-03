@@ -11,12 +11,14 @@
   /* ---------------- Constantes ---------------- */
   const EXAM_SECONDS = 2 * 60 * 60;
   const LIMITS = { optimo: 8 * 60, maximo: 10 * 60 };
-  const PASS = 7;
+  const PASS = 6; // ejercicios completos; con menos la nota es 2
+  // shortcut: escala interpolada de dos datos reales (6 → 4, 9 → 6); reemplazar si aparece la escala oficial
+  const NOTA_POR_COMPLETOS = { 6: 4, 7: 5, 8: 5, 9: 6, 10: 7 };
   const LS_EXAM = 'utn-finales:exam', LS_HISTORY = 'utn-finales:history', LS_CONFIG = 'utn-finales:config';
 
   /** Slots del examen: cada punto elige un generador de su familia */
   const MATH_SLOTS = [
-    ['calculoNumerico', 'calculoNumerico', 'expresionesAlgebraicas', 'notacionCientifica', 'fracciones', 'racionalizacion', 'intervalos', 'pasajeNotacion', 'conjuntosNumericos'],
+    ['calculoNumerico', 'calculoNumerico', 'expresionesAlgebraicas', 'notacionCientifica', 'fracciones', 'racionalizacion', 'intervalos', 'pasajeNotacion', 'conjuntosNumericos', 'complejos', 'complejos'],
     ['vectoresParametro', 'vectoresModulo', 'vectoresOperaciones', 'desplazamientos', 'versorProductoEscalar'],
     ['polinomioParametros', 'polinomioGauss', 'polinomioTresParametros', 'fraccionesAlgebraicas'],
     ['polinomioDivisible', 'polinomioProductoCociente', 'inecuacionModulo', 'inecuacionLineal', 'inecuacionNoLineal', 'inecuacionProblema'],
@@ -27,18 +29,10 @@
     ['trigTriangulos', 'trigIdentidades', 'lecturaGrafico', 'expresionesAlgebraicas', 'angulosConversion', 'dominioFuncion', 'transformacionFunciones'],
     ['funcionTrig', 'funcionTrig', 'funcionTrigTransformada'],
   ];
-  /** Nivel Final (primera instancia): sin logaritmos, ecuaciones irracionales, polinomios con parámetros ni funciones trigonométricas con parámetros */
+  /** Nivel Final: los 10 puntos del final del 3/11/2026 (Temas A y B), en el mismo orden */
   const MATH_SLOTS_1 = [
-    ['expresionesAlgebraicas', 'racionalizacion', 'fracciones', 'notacionCientifica', 'pasajeNotacion', 'intervalos', 'calculoNumerico'],
-    ['vectoresParametro', 'vectoresOperaciones', 'versorProductoEscalar', 'desplazamientos'],
-    ['polinomioProductoCociente', 'fraccionesAlgebraicas'],
-    ['inecuacionModulo', 'inecuacionLineal', 'inecuacionProblema', 'inecuacionNoLineal'],
-    ['ecuacionModulo', 'ecuacionLineal', 'ecuacionCuadratica', 'ecuacionBicuadratica', 'ecuacionExp', 'ecuacionRacional'],
-    ['rectas', 'linealContexto', 'linealContexto', 'rectaPendiente'],
-    ['sistemas', 'sistemaClasificar'],
-    ['cuadraticaContexto', 'cuadraticaContexto', 'parabolaElementos'],
-    ['trigTriangulos', 'trigTriangulos', 'trigIdentidades', 'angulosConversion'],
-    ['lecturaGrafico', 'dominioFuncion', 'transformacionFunciones'],
+    ['finalCalculo'], ['complejos'], ['polinomioParametros', 'finalPolinomioResto'], ['finalModulo'], ['finalVectores'],
+    ['finalLog'], ['finalRectas'], ['finalCuadratica'], ['finalTriangulo'], ['finalFuncionTrig'],
   ];
   const LEVEL_LABEL = { primera: 'Final', recuperatorio: 'Recuperatorio' };
   const levelOf = (cfg) => (cfg && cfg.level) || 'recuperatorio'; // exámenes guardados sin nivel = mezcla completa
@@ -51,40 +45,16 @@
 
   const TOPICS = [
     { area: 'Precálculo', items: [
-      ['Función cuadrática en contexto (altura, vértice, raíces, parábola por puntos)', 'Muy alta'],
-      ['Polinomios: parámetros, Ruffini, Gauss, teorema del resto, producto y cociente', 'Muy alta'],
-      ['Funciones trigonométricas: amplitud, período, frecuencia, pulsación, imagen', 'Muy alta'],
-      ['Ecuaciones logarítmicas con dominio y verificación', 'Alta'],
-      ['Vectores: perpendicularidad con parámetro, módulo, suma, ángulo', 'Alta'],
-      ['Sistemas: mezclas, autos/motos, entradas, encuentro de móviles', 'Alta'],
-      ['Función lineal en contexto y rectas paralelas/perpendiculares', 'Alta'],
-      ['Cálculo numérico con potencias, raíces y notación científica', 'Alta'],
-      ['Trigonometría: teodolito, ángulos de elevación, identidades', 'Media'],
-      ['Inecuaciones con valor absoluto y lineales con radicales', 'Media'],
-      ['Ecuaciones exponenciales, racionales y con radicales', 'Media'],
-      ['Expresiones algebraicas: factorizar, simplificar, potencias, radicales', 'Media'],
-      ['Desplazamientos con rosa de los vientos', 'Media'],
-      ['Lectura de gráficos (imagen, valor, signo)', 'Baja'],
-      ['Conjuntos, intervalos (unión, intersección, amplitud) y conjuntos numéricos', 'Muy baja'],
-      ['Fracciones, racionalización y pasajes de notación científica / unidades', 'Muy baja'],
-      ['Vector unitario, producto escalar y ángulo entre vectores', 'Muy baja'],
-      ['Ecuaciones lineales, cuadráticas, bicuadráticas y con módulo; planteo de problemas', 'Muy baja'],
-      ['Inecuaciones no lineales (tabla de signos) y problemas con inecuaciones', 'Muy baja'],
-      ['Fracciones algebraicas: suma, resta, producto y simplificación', 'Muy baja'],
-      ['Dominio y transformaciones de funciones; función trigonométrica transformada', 'Muy baja'],
-      ['Recta por dos puntos, ángulo de inclinación, parámetro k; elementos de la parábola', 'Muy baja'],
-      ['Clasificación de sistemas 2×2 (S.C.D., S.C.I., S.I.) y conversión grados ↔ radianes', 'Muy baja'],
-    ] },
-    { area: 'Física', items: [
-      ['Pasajes de unidades (longitud, tiempo, velocidad)', 'Muy alta'],
-      ['Tiro vertical: altura, altura máxima, tiempos, velocidad final', 'Muy alta'],
-      ['Vectores: k para paralelos/perpendiculares, suma, ángulo, versor', 'Muy alta'],
-      ['Desplazamientos: resultante y ángulo', 'Alta'],
-      ['Caída libre: ecuaciones, tiempo de caída, velocidad de impacto', 'Alta'],
-      ['MRUV: aceleración, frenado, función velocidad', 'Alta'],
-      ['MRU: encuentro y velocidad promedio', 'Alta'],
-      ['Gráficos posición-tiempo', 'Media'],
-      ['Magnitudes físicas: fundamentales/derivadas y escalares/vectoriales', 'Muy baja'],
+      ['Cálculo combinado con potencias y raíces + masa de un lote en notación científica (mg → kg)', 'Muy alta'],
+      ['Números complejos: potencias de i, cociente por el conjugado, módulo del conjugado', 'Muy alta'],
+      ['Polinomios: parámetros con P(a) y raíz dada, teorema del resto, divisibilidad, factorización', 'Muy alta'],
+      ['Valor absoluto: tolerancias |d − n| ≤ t y dominio de raíces con |ax − b|', 'Muy alta'],
+      ['Vectores: hallar x con igual módulo o módulo múltiplo; componentes y gráfico', 'Muy alta'],
+      ['Ecuaciones logarítmicas y su dominio', 'Muy alta'],
+      ['Rectas: explícita, implícita, por dos puntos y perpendicular por un punto', 'Muy alta'],
+      ['Función cuadrática en contexto: tiro vertical, altura máxima, tiempo de impacto, dominio e imagen', 'Muy alta'],
+      ['Trigonometría en el triángulo rectángulo: cable tensor, sombra y ángulo de elevación', 'Muy alta'],
+      ['Funciones seno/coseno en contexto: máximos y mínimos, k, amplitud, período e imagen', 'Muy alta'],
     ] },
   ];
 
@@ -267,11 +237,12 @@
   function gradeExam() {
     const per = state.exercises.map((e, i) => {
       const items = e.ex.items.map((it) => ({ item: it, ...gradeItem(it, state.exam.answers[i][it.key]) }));
-      const score = items.reduce((s, r) => s + (r.ok ? 1 : 0), 0) / items.length;
+      const score = items.every((r) => r.ok) ? 1 : 0; // un error invalida el punto
       return { i, items, score };
     });
     const total = per.reduce((s, p) => s + p.score, 0);
-    return { per, total, nota: Math.round(total * 10) / 10, aprobado: total >= PASS };
+    const aprobado = total >= PASS;
+    return { per, total, nota: aprobado ? NOTA_POR_COMPLETOS[total] : 2, aprobado };
   }
 
   /* ---------------- Sonido de aviso ---------------- */
@@ -551,13 +522,13 @@
             </div>
             <div class="sm:ml-auto flex items-center gap-3 sm:gap-5 max-sm:w-full">
               <div class="text-center"><p class="text-5xl font-black ${r.aprobado ? 'text-emerald-600' : 'text-red-600'} animate-pop">${fmt(r.nota, 1)}</p><p class="text-xs text-slate-500">nota / 10</p></div>
-              <div class="min-w-0"><span class="chip ${r.aprobado ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} text-sm px-3 py-1 max-sm:px-2 max-sm:text-xs">${r.aprobado ? 'APROBADO' : 'DESAPROBADO'}</span><p class="mt-1 text-xs text-slate-500">Se aprueba con 70% (7)</p></div>
+              <div class="min-w-0"><span class="chip ${r.aprobado ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} text-sm px-3 py-1 max-sm:px-2 max-sm:text-xs">${r.aprobado ? 'APROBADO' : 'DESAPROBADO'}</span><p class="mt-1 text-xs text-slate-500">Se aprueba con ${PASS} ejercicios completos (nota ${NOTA_POR_COMPLETOS[PASS]}); con menos, 2</p></div>
               <button type="button" class="btn-secondary no-print ml-auto max-w-[4.75rem] shrink-0 !px-2 !py-1.5 text-center text-[11px] leading-tight sm:hidden" data-act="retry">↻ Repetir este tema</button>
             </div>
           </div>
           <div class="mt-6 grid gap-3 sm:grid-cols-4 text-sm">
             <div class="rounded-xl bg-slate-50 p-3"><p class="text-xs text-slate-500">Tiempo empleado</p><p class="font-mono font-bold">${fmtTime(secs)}</p></div>
-            <div class="rounded-xl bg-slate-50 p-3"><p class="text-xs text-slate-500">Puntos correctos</p><p class="font-bold">${r.per.filter((p) => p.score === 1).length} completos · ${r.per.filter((p) => p.score > 0 && p.score < 1).length} parciales</p></div>
+            <div class="rounded-xl bg-slate-50 p-3"><p class="text-xs text-slate-500">Puntos correctos</p><p class="font-bold">${r.total} de ${r.per.length} completos</p></div>
             ${nMath ? `<div class="rounded-xl bg-slate-50 p-3"><p class="text-xs text-slate-500">Precálculo</p><p class="font-bold">${fmt(mathScore, 1)} / ${nMath}</p></div>` : ''}
             ${nFis ? `<div class="rounded-xl bg-slate-50 p-3"><p class="text-xs text-slate-500">Física</p><p class="font-bold">${fmt(fisScore, 1)} / ${nFis}</p></div>` : ''}
           </div>
@@ -637,7 +608,6 @@
     const cfg = ls.get(LS_CONFIG, null);
     if (cfg) {
       const f = $('#config-form');
-      (f.elements.subject.value = cfg.subject);
       f.elements.level.value = cfg.level || 'primera';
       f.elements.timed.value = cfg.timed ? 'yes' : 'no';
       if (cfg.mode) f.elements.mode.value = cfg.mode;
@@ -665,7 +635,7 @@
   function closeTopics() { const m = $('#topics-modal'); m.classList.add('hidden'); m.classList.remove('flex'); document.body.classList.remove('overflow-hidden'); $('#btn-topics').focus(); }
   function readConfig() {
     const f = $('#config-form');
-    return { subject: f.elements.subject.value, level: f.elements.level.value, timed: f.elements.timed.value === 'yes', mode: f.elements.mode.value, hints: f.elements.hints.checked };
+    return { subject: 'math', level: f.elements.level.value, timed: f.elements.timed.value === 'yes', mode: f.elements.mode.value, hints: f.elements.hints.checked };
   }
 
   /* ---------------- Eventos ---------------- */
@@ -693,7 +663,7 @@
       if (b.dataset.act || b.dataset.retry) closeHistoryMenu();
       if (b.dataset.act === 'resume') { const saved = ls.get(LS_EXAM, null); if (saved) resumeExam(saved); }
       else if (b.dataset.act === 'discard') { modal({ title: 'Descartar examen', body: 'Se perderán las respuestas cargadas.', confirmText: 'Descartar', danger: true }).then((ok) => { if (ok) { ls.del(LS_EXAM); renderHome(); } }); }
-      else if (b.dataset.retry) { launch({ ...readConfig(), subject: b.dataset.subject }, normSeed(b.dataset.retry)); toast(`Repetís el tema ${b.dataset.retry} con el nivel, el tiempo y las ayudas actuales.`); }
+      else if (b.dataset.retry) { launch(readConfig(), normSeed(b.dataset.retry)); toast(`Repetís el tema ${b.dataset.retry} con el nivel, el tiempo y las ayudas actuales.`); }
     };
     $('#history-card').addEventListener('click', onHistoryClick);
     $('#history-menu').addEventListener('click', onHistoryClick);

@@ -790,4 +790,28 @@ $$${texPoly([A, B], 'x', 0)}=${rhs}\\ \\Rightarrow\\ ${tex(A)}x=${rhs - B}\\ \\R
       solution: `<ul>${q1.map((q) => `<li>${cap(q.n)} es una magnitud <b>${q.fund ? 'fundamental' : 'derivada'}</b>.</li>`).join('')}${q2.map((q) => `<li>${cap(q.n)} es una magnitud <b>${q.vec ? 'vectorial' : 'escalar'}</b>${q.vec ? ' (necesita módulo, dirección y sentido)' : ' (queda definida con un número y su unidad)'}.</li>`).join('')}</ul>`,
     };
   };
+  /* ======================= 17. NÚMEROS COMPLEJOS ======================= */
+  // como en el final: |conj(z)| con z = [(a + bi) + iⁿ] / (c + di)
+  G.math.complejos = function (rng) {
+    const c = rng.pick([1, 1, 2]), d = rng.pick(c === 1 ? [1, -1, 2, -2] : [1, -1]);
+    let p, q;
+    do { p = rng.intNZ(-7, 7); q = rng.int(-7, 7); } while (q === 0 && rng.bool(0.7));
+    const k = rng.int(0, 3), pw = [[1, 0], [0, 1], [-1, 0], [0, -1]][k], n = 4 * rng.int(2, 7) + k;
+    const Nre = p * c - q * d, Nim = p * d + q * c, a = Nre - pw[0], b = Nim - pw[1];
+    const num = b === 0 ? `(${a})` : `(${a}${texSC(b)}i)`;
+    const zt = (re, im) => (im === 0 ? tex(re) : `${re === 0 ? '' : tex(re)}${re === 0 && im > 0 ? '' : im > 0 ? '+' : '-'}${Math.abs(im) === 1 ? '' : tex(Math.abs(im))}i`);
+    const den = c * c + d * d, mod = Math.hypot(p, q);
+    return {
+      topic: 'Números complejos', title: 'Módulo del conjugado de un cociente',
+      hint: 'Las potencias de i se repiten cada 4: iⁿ = i^(resto de n÷4). Cociente: multiplicá numerador y denominador por el conjugado del denominador. Conjugado: cambiá el signo de la parte imaginaria; tiene el mismo módulo √(a² + b²).',
+      statement: `<p>Determine el módulo del complejo conjugado siendo</p>$$z=\\dfrac{\\left[${num}+i^{${n}}\\right]}{${c}${texSC(d)}i}$$`,
+      items: [
+        { key: 'zc', type: 'vector', label: 'Conjugado z̄ = (parte real ; parte imaginaria)', answer: [p, -q], tol: 0.011 },
+        { key: 'mod', type: 'number', label: '|z̄|', answer: mod, tol: 0.011 },
+      ],
+      solution: `<p>$i^{${n}}=i^{${k}}=${['1', 'i', '-1', '-i'][k]}$ (${n} = 4·${(n - k) / 4} + ${k}), entonces el numerador es $${zt(Nre, Nim)}$.</p>
+<p>Multiplicamos por el conjugado del denominador:</p>$$z=\\dfrac{(${zt(Nre, Nim)})(${c}${texSC(-d)}i)}{${c * c}+${d * d}}=\\dfrac{${zt(Nre * c + Nim * d, Nim * c - Nre * d)}}{${den}}=${zt(p, q)}$$
+<p>$\\overline{z}=${zt(p, -q)}$ y $|\\overline{z}|=\\sqrt{${p * p}+${q * q}}${Number.isInteger(mod) ? '' : `=\\sqrt{${p * p + q * q}}`}\\approx${tex(mod, 3)}$.</p>`,
+    };
+  };
 })(window);
